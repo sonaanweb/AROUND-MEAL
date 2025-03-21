@@ -72,6 +72,9 @@ dependencies {
 	// Jackson
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2'
 
+	// JDBC
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
 }
 
 tasks.named('test') {
