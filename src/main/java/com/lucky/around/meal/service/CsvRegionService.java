@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 
@@ -34,6 +36,11 @@ public class CsvRegionService {
      */
     ClassPathResource resource = new ClassPathResource("region/sgg_lat_lon.csv");
 
+    Set<String> existingRegions =
+        regionRepository.findAll().stream()
+            .map(region -> region.getDosi() + "," + region.getSigungu())
+            .collect(Collectors.toSet());
+
     List<Region> regionList = new ArrayList<>();
 
     try (BufferedReader reader =
@@ -57,9 +64,11 @@ public class CsvRegionService {
         double lat = Double.parseDouble(columns[3].trim());
 
         // 데이터 중복 체크
-        if (!regionRepository.existsByDosiAndSigungu(dosi, sigungu)) {
+        String regionKey = dosi + "," + sigungu;
+        if (!existingRegions.contains(regionKey)) {
           Region region = Region.builder().dosi(dosi).sigungu(sigungu).lon(lon).lat(lat).build();
           regionList.add(region);
+          existingRegions.add(regionKey);
         }
       }
 
